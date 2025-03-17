@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +31,8 @@ public class CdrRecord {
     private String id;
     
     @Column(name = "call_type")
-    private int callType;
+    @Enumerated(EnumType.STRING)
+    private CallType callType;
 
     @Column(name = "caller_number")
     private String callerNumber;
@@ -38,8 +41,8 @@ public class CdrRecord {
     private String receiverNumber;
 
     @Column(name = "start_time")
-    private LocalDateTime startTime;
+    private String startTime;
 
     @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private String endTime;
 }

@@ -1,9 +1,15 @@
 package com.alwx.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Random;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.alwx.model.CallType;
 import com.alwx.model.CdrRecord;
 import com.alwx.model.Subscriber;
 import com.alwx.repository.CdrRecordRepository;
@@ -11,12 +17,6 @@ import com.alwx.repository.SubscriberRepository;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class CdrGeneratorService {
     private final CdrRecordRepository cdrRecordRepository;
     
     private final Random random = new Random();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     
     @PostConstruct
     public void initSubscribers() {
@@ -47,6 +47,7 @@ public class CdrGeneratorService {
     public void generateCdrRecordsForYear() {
         LocalDateTime startDate = LocalDateTime.of(2025, 1, 1, 0, 0);
         LocalDateTime endDate = startDate.plusYears(1);
+
         List<Subscriber> subscribers = subscriberRepository.findAll();
         
         int recordsCount = random.nextInt(4000) + 1000;
@@ -64,39 +65,40 @@ public class CdrGeneratorService {
     
     private CdrRecord generateSingleCdr(List<Subscriber> subscribers, LocalDateTime startTime) {
         CdrRecord cdr = new CdrRecord();
-        cdr.setId(UUID.randomUUID().toString());
-        
-        cdr.setCallType(random.nextBoolean() ? "01" : "02");
         
         int callerIndex = random.nextInt(subscribers.size());
         int receiverIndex;
         do {
             receiverIndex = random.nextInt(subscribers.size());
         } while (receiverIndex == callerIndex);
+    
+        LocalDateTime endTime = startTime.plusMinutes(random.nextInt(30) + 1);
+
+        String formattedStartTime = startTime.format(formatter);
+        String formattedEndTime = endTime.format(formatter);
         
+        cdr.setCallType(random.nextBoolean() ? CallType.INCOMING : CallType.OUTCOMING);
         cdr.setCallerNumber(subscribers.get(callerIndex).getPhoneNumber());
         cdr.setReceiverNumber(subscribers.get(receiverIndex).getPhoneNumber());
-        
-        cdr.setStartTime(startTime);
-        int callDuration = random.nextInt(30) + 1; 
-        cdr.setEndTime(startTime.plusMinutes(callDuration));
+        cdr.setStartTime(formattedStartTime);
+        cdr.setEndTime(formattedEndTime);
         
         return cdr;
     }
     
-    public String generateCdrReport(String phoneNumber) {
-        List<CdrRecord> records = cdrRecordRepository.findByCallerNumberOrReceiverNumberOrderByStartTime(
-                phoneNumber, phoneNumber);
+    
+    public ResponseEntity<?> generateCdrReportAll() {
+        List<CdrRecord> records = cdrRecordRepository.findAll();
         
         StringBuilder report = new StringBuilder();
         for (CdrRecord record : records) {
             report.append(String.format("%s,%s,%s,%s,%s%n",
-                    record.getCallType(),
+                    record.getCallType().getCode(),
                     record.getCallerNumber(),
                     record.getReceiverNumber(),
-                    record.getStartTime().format(FORMATTER),
-                    record.getEndTime().format(FORMATTER)));
+                    record.getStartTime(),
+                    record.getEndTime()));
         }
-        return report.toString();
+        return ResponseEntity.ok(report.toString());
     }
 }
