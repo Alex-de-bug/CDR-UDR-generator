@@ -1,14 +1,10 @@
 package com.alwx.report.udr.dto;
 
-import java.util.List;
-
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class UdrReport {
     private String msisdn;
     private CallDuration incomingCall;

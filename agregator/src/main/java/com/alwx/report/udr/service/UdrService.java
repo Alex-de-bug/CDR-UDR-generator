@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,36 +32,37 @@ public class UdrService {
         Subscriber subscriber = subscriberRepository.findByPhoneNumber(msisdn)
             .orElseThrow(() -> new RuntimeException("Subscriber not found"));
 
-        List<Call> calls;
+        List<Call> callPage;
         if (monthS == null || monthS.isBlank()) {
-            calls = callRepository.findCallsByPhone(subscriber.getId());
+            callPage = callRepository.findCallsBySub(subscriber.getId());
         } else {
             try {
                 int month = Integer.parseInt(monthS);
                 if (month < 1 || month > 12) {
                     throw new RuntimeException("Month must be between 1 and 12");
                 }
-                calls = callRepository.findCallsByMonthAndPhone(month, subscriber.getId());
+                callPage = callRepository.findCallsByMonthAndSub(month, subscriber.getId());
             } catch (NumberFormatException e) {
                 throw new RuntimeException("Month must be a valid number");
             }
         }
     
-        return buildUdrReport(msisdn, calls);
+        return buildUdrReport(msisdn, callPage);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true) // желательно избежать грязного чтения
-    public List<UdrReport> getUdrForAllSubscribers(String monthS) {
-        List<Subscriber> subscribers = subscriberRepository.findAll();
-        List<UdrReport> reports = new ArrayList<>();
+    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
+    public List<UdrReport> getUdrForAllSubscribers(String monthS, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Subscriber> subscriberPage = subscriberRepository.findAll(pageable);
 
+        List<UdrReport> reports = new ArrayList<>();
         try {
             int month = Integer.parseInt(monthS);
             if (month < 1 || month > 12) {
                 throw new RuntimeException("Month must be between 1 and 12");
             }
-            for (Subscriber subscriber : subscribers) {
-                List<Call> calls = callRepository.findCallsByMonthAndPhone(month, subscriber.getId());
+            for (Subscriber subscriber : subscriberPage.getContent()) {
+                List<Call> calls = callRepository.findCallsByMonthAndSub(month, subscriber.getId());
                 reports.add(buildUdrReport(subscriber.getPhoneNumber(), calls));
             }
         } catch (NumberFormatException e) {

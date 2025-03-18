@@ -20,6 +20,6 @@ public class CallController {
     @GetMapping
     public ResponseEntity<?> getAllCall(){
         log.info("Get all call's");
-        return ResponseEntity.ok(callService.getAllReport());
+        return ResponseEntity.ok(callService.getAllCalls());
     }
 }

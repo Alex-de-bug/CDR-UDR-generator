@@ -17,13 +17,8 @@ public class CallService {
     private final CallRepository callRepository;
     private final DateTimeFormatter dateTimeFormatter;
 
-
-    public List<? extends Call> getAllCalls() {
-        return callRepository.findAll();
-    }
-
-    public String getAllReport() {
-        List<? extends Call> records = getAllCalls();
+    public String getAllCalls() {
+        List<? extends Call> records = callRepository.findAll();
         
         StringBuilder report = new StringBuilder();
         for (Call record : records) {

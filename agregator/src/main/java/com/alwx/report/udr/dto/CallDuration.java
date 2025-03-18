@@ -4,13 +4,11 @@ import java.time.Duration;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class CallDuration {
     private Duration totalTime;
 

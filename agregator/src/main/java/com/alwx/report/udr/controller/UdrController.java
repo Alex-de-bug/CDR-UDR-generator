@@ -35,9 +35,11 @@ public class UdrController {
 
     @GetMapping
     public ResponseEntity<List<UdrReport>> getUdrForAllSubscribers(
-        @RequestParam String month) {
+        @RequestParam String month,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
         log.info("Get UDR for all subscribers for month: {}", month);
-        List<UdrReport> reports = udrService.getUdrForAllSubscribers(month);
+        List<UdrReport> reports = udrService.getUdrForAllSubscribers(month, page, size);
         return ResponseEntity.ok(reports);
     }
 }
