@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/call")
+@RequestMapping("/api/calls")
 @Slf4j
 public class CallController {
     private final CallService callService;
@@ -20,6 +20,6 @@ public class CallController {
     @GetMapping
     public ResponseEntity<?> getAllCall(){
         log.info("Get all call's");
-        return ResponseEntity.ok(callService.getCdrReport());
+        return ResponseEntity.ok(callService.getAllReport());
     }
 }
