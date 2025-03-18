@@ -1,11 +1,10 @@
-package com.alwx.model;
+package com.alwx.call.model;
 
-import java.time.LocalDateTime;
+import com.alwx.utils.CallTypeConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,20 +17,20 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "cdr_record")
+@Table(name = "call")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder(toBuilder = true)
-public class CdrRecord {
+public class Call {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     
     @Column(name = "call_type")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = CallTypeConverter.class)
     private CallType callType;
 
     @Column(name = "caller_number")

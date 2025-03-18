@@ -1,4 +1,4 @@
-package com.alwx.service;
+package com.alwx.call.service;
 
 
 import java.time.LocalDateTime;
@@ -9,21 +9,21 @@ import java.util.Random;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.alwx.model.CallType;
-import com.alwx.model.CdrRecord;
-import com.alwx.model.Subscriber;
-import com.alwx.repository.CdrRecordRepository;
-import com.alwx.repository.SubscriberRepository;
+import com.alwx.call.dao.CallRepository;
+import com.alwx.call.model.Call;
+import com.alwx.call.model.CallType;
+import com.alwx.subscriber.dao.SubscriberRepository;
+import com.alwx.subscriber.model.Subscriber;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CdrGeneratorService {
+public class CallGeneratorService {
     
     private final SubscriberRepository subscriberRepository;
-    private final CdrRecordRepository cdrRecordRepository;
+    private final CallRepository cdrRecordRepository;
     
     private final Random random = new Random();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -55,7 +55,7 @@ public class CdrGeneratorService {
         LocalDateTime currentTime = startDate;
         
         for (int i = 0; i < recordsCount && currentTime.isBefore(endDate); i++) {
-            CdrRecord cdr = generateSingleCdr(subscribers, currentTime);
+            Call cdr = generateSingleCdr(subscribers, currentTime);
             cdrRecordRepository.save(cdr);
             
             int minutesToAdd = random.nextInt(120) + 1;
@@ -63,8 +63,8 @@ public class CdrGeneratorService {
         }
     }
     
-    private CdrRecord generateSingleCdr(List<Subscriber> subscribers, LocalDateTime startTime) {
-        CdrRecord cdr = new CdrRecord();
+    private Call generateSingleCdr(List<Subscriber> subscribers, LocalDateTime startTime) {
+        Call cdr = new Call();
         
         int callerIndex = random.nextInt(subscribers.size());
         int receiverIndex;
@@ -88,10 +88,10 @@ public class CdrGeneratorService {
     
     
     public ResponseEntity<?> generateCdrReportAll() {
-        List<CdrRecord> records = cdrRecordRepository.findAll();
+        List<Call> records = cdrRecordRepository.findAll();
         
         StringBuilder report = new StringBuilder();
-        for (CdrRecord record : records) {
+        for (Call record : records) {
             report.append(String.format("%s,%s,%s,%s,%s%n",
                     record.getCallType().getCode(),
                     record.getCallerNumber(),

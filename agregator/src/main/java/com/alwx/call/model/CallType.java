@@ -1,4 +1,4 @@
-package com.alwx.model;
+package com.alwx.call.model;
 
 import lombok.Getter;
 

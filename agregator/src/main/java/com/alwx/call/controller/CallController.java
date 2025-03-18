@@ -1,25 +1,25 @@
-package com.alwx.controller;
+package com.alwx.call.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alwx.service.CdrGeneratorService;
+import com.alwx.call.service.CallGeneratorService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/cdr")
+@RequestMapping("/api/call")
 @Slf4j
-public class CdrController {
-    private final CdrGeneratorService cdrGeneratorService;
+public class CallController {
+    private final CallGeneratorService cdrGeneratorService;
 
     @GetMapping
-    public ResponseEntity<?> getAllCdr(){
-        log.info("Get all CDR's");
+    public ResponseEntity<?> getAllCall(){
+        log.info("Get all call's");
         return cdrGeneratorService.generateCdrReportAll();
     }
 }

@@ -1,4 +1,4 @@
-package com.alwx.model;
+package com.alwx.subscriber.model;
 
 
 import jakarta.persistence.Column;
