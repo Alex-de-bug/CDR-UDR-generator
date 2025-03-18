@@ -1,6 +1,6 @@
 package com.alwx.call.model;
 
-import com.alwx.utils.CallTypeConverter;
+import com.alwx.call.utils.CallTypeConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -27,7 +27,7 @@ import lombok.ToString;
 public class Call {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     
     @Column(name = "call_type")
     @Convert(converter = CallTypeConverter.class)

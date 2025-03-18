@@ -29,6 +29,6 @@ public class Subscriber {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique=true)
     private String phoneNumber;
 }

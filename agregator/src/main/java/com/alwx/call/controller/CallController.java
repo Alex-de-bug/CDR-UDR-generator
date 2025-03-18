@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alwx.call.service.CallGeneratorService;
+import com.alwx.call.service.CallService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/call")
 @Slf4j
 public class CallController {
-    private final CallGeneratorService cdrGeneratorService;
+    private final CallService callService;
 
     @GetMapping
     public ResponseEntity<?> getAllCall(){
         log.info("Get all call's");
-        return cdrGeneratorService.generateCdrReportAll();
+        return ResponseEntity.ok(callService.getCdrReport());
     }
 }
