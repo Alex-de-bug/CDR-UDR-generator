@@ -10,22 +10,19 @@ public class CallTypeConverter implements AttributeConverter<CallType, String> {
     
     @Override
     public String convertToDatabaseColumn(CallType callType) {
-        return callType != null ? callType.getCode() : null;
+        if(callType == null) throw new IllegalArgumentException("Unknown code");
+        return callType.getCode();
     }
     
     @Override
     public CallType convertToEntityAttribute(String code) {
-        if (code == null) {
-            return null;
-        }
-        
         for (CallType callType : CallType.values()) {
             if (callType.getCode().equals(code)) {
                 return callType;
             }
         }
         
-        throw new IllegalArgumentException("Unknown code: " + code);
+        throw new IllegalArgumentException("Unknown code");
     }
 }
 
