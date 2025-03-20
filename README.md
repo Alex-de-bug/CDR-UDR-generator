@@ -222,4 +222,4 @@ Endpoint 4:
 
 В браузере swagger: http://localhost:8080/swagger-ui/index.html#/
 
-Тесты Junit [тут]{https://github.com/Alex-de-bug/CDR-UDR-generator/tree/main/agregator/src/test}
+Тесты Junit [тут](https://github.com/Alex-de-bug/CDR-UDR-generator/tree/main/agregator/src/test)
