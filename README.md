@@ -214,9 +214,11 @@ Endpoint 4:
 
 ## Запуск
 
-``` mvn clean ```
-
 ``` mvn spring-boot:run ```
+
+или 
+
+```java -jar agregator-1.0-SNAPSHOT.jar```
 
 В браузере swagger: http://localhost:8080/swagger-ui/index.html#/
 
