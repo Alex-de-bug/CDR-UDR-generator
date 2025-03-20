@@ -21,12 +21,27 @@ import com.alwx.subscriber.model.Subscriber;
 
 import lombok.RequiredArgsConstructor;
 
+
+/**
+ * Сервис для генерации отчетов UDR.
+ * Предоставляет функциональность для создания отчетов об использовании услуг связи
+ * для одного или всех абонентов.
+ */
 @Service
 @RequiredArgsConstructor
 public class UdrService {
     private final CallRepository callRepository;
     private final SubscriberRepository subscriberRepository;
 
+    /**
+     * Возвращает отчет UDR для указанного абонента за заданный месяц или без учета месяца.
+     * Выполняется в транзакции только для чтения.
+     * 
+     * @param msisdn Номер телефона абонента (MSISDN).
+     * @param monthS Месяц в виде строки (например, "3" для марта), может быть null или пустым.
+     * @return Объект {@link UdrReport}, содержащий данные о входящих и исходящих звонках.
+     * @throws RuntimeException Если абонент не найден, месяц некорректен или не является числом.
+     */
     @Transactional(readOnly = true)
     public UdrReport getUdrForSubscriber(String msisdn, String monthS) {
         Subscriber subscriber = subscriberRepository.findByPhoneNumber(msisdn)
@@ -50,6 +65,16 @@ public class UdrService {
         return buildUdrReport(msisdn, callPage);
     }
 
+    /**
+     * Возвращает список отчетов UDR для всех абонентов за указанный месяц с поддержкой пагинации.
+     * Выполняется в транзакции с уровнем изоляции READ_COMMITTED и только для чтения.
+     * 
+     * @param monthS Месяц в виде строки (например, "2" для февраля).
+     * @param page Номер страницы (начиная с 0).
+     * @param size Размер страницы (количество записей на странице).
+     * @return Список объектов {@link UdrReport} для абонентов на указанной странице.
+     * @throws RuntimeException Если месяц некорректен или не является числом.
+     */
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<UdrReport> getUdrForAllSubscribers(String monthS, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -72,6 +97,14 @@ public class UdrService {
         return reports;
     }
 
+    /**
+     * Создает отчет UDR на основе списка звонков для указанного абонента.
+     * Вычисляет общую продолжительность входящих и исходящих звонков.
+     * 
+     * @param msisdn Номер телефона абонента (MSISDN).
+     * @param calls Список записей о звонках для обработки.
+     * @return Объект {@link UdrReport} с данными о продолжительности звонков.
+     */
     private UdrReport buildUdrReport(String msisdn, List<Call> calls) {
         UdrReport report = new UdrReport();
         report.setMsisdn(msisdn);

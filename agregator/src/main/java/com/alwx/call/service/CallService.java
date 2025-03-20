@@ -10,6 +10,11 @@ import com.alwx.call.model.Call;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Сервис для работы с данными о звонках.
+ * Предоставляет функциональность для получения информации о всех звонках
+ * в виде отформатированной строки. ТЕСТИРОВАНИЕ!!!
+ */
 @Service
 @RequiredArgsConstructor
 public class CallService {
@@ -17,6 +22,14 @@ public class CallService {
     private final CallRepository callRepository;
     private final DateTimeFormatter dateTimeFormatter;
 
+    /**
+     * Получает все записи о звонках и возвращает их в виде строки.
+     * Каждая запись форматируется в CSV-подобный формат с полями:
+     * тип звонка, номер вызывающего, номер принимающего, время начала, время окончания.
+     * Строки разделяются символом новой строки.
+     * 
+     * @return Отформатированная строка, содержащая информацию о всех звонках.
+     */
     public String getAllCalls() {
         List<? extends Call> records = callRepository.findAll();
         

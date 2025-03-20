@@ -214,8 +214,10 @@ Endpoint 4:
 
 ## Запуск
 
-``` mvn clean install ```
+``` mvn clean ```
 
 ``` mvn spring-boot:run ```
 
 В браузере swagger: http://localhost:8080/swagger-ui/index.html#/
+
+Тесты Junit [тут]{https://github.com/Alex-de-bug/CDR-UDR-generator/tree/main/agregator/src/test}

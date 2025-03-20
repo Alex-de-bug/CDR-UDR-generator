@@ -18,6 +18,12 @@ import com.alwx.subscriber.model.Subscriber;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
+/**
+ * Сервис для генерации и сохранения отчетов CDR (Call Detail Record).
+ * Отвечает за создание отчетов о звонках для указанного абонента за определенный период
+ * и сохранение их в виде CSV-файлов в директории отчетов.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,6 +33,14 @@ public class SdrService {
     private final DateTimeFormatter dateTimeFormatter;
     private static final String REPORTS_DIR = "reports/";
 
+    /**
+     * Генерирует отчет CDR для указанного абонента и сохраняет его в файл.
+     * Выполняется в транзакции с уровнем доступа только для чтения.
+     * 
+     * @param requestId Уникальный идентификатор запроса на генерацию отчета.
+     * @param cdrRequest Объект запроса, содержащий данные о номере абонента и периоде.
+     * @throws RuntimeException Если абонент не найден, даты некорректны или произошла ошибка при генерации.
+     */
     @Transactional(readOnly = true)
     public void generateCdrReport(String requestId, CdrRequest cdrRequest) {
         try {
@@ -51,7 +65,15 @@ public class SdrService {
             throw new RuntimeException("Report generation failed", e);
         }
     }
-
+    /**
+     * Создает и сохраняет отчет CDR в CSV-файл.
+     * Формирует строки отчета с данными о звонках и записывает их в файл с именем, основанным на requestId.
+     * 
+     * @param requestId Уникальный идентификатор запроса, используемый в имени файла.
+     * @param subscriber Абонент, для которого генерируется отчет.
+     * @param calls Список записей о звонках, включаемых в отчет.
+     * @throws RuntimeException Если произошла ошибка при создании или записи в файл.
+     */
     private void generateAndSaveReport(String requestId, Subscriber subscriber, List<Call> calls) {
         try {
             File dir = new File(REPORTS_DIR);
